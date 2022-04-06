@@ -1,0 +1,65 @@
+---
+title: "Initial Model"
+author: "Steve Walker and Amy Hurford"
+date: "06/04/2022"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r dependencies, message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyr)
+library(dplyr)
+library(McMasterPandemic)
+library(ggplot2)
+source('../functions.R')
+observed_data = readRDS('observed_data.rds')
+fit = readRDS('fit.rds')
+fitted_data = readRDS('fitted_data.rds')
+```
+
+Optimize the following parameters at the following starting values.
+```{r}
+fit$forecast_args$opt_pars$params
+```
+Prefixing by `log_` or `logit_` means we are optimizing on these scales.
+
+These parameters have the following meanings (TODO: the description for phi1 looks wrong).
+```{r, echo=FALSE}
+param_nms_to_opt = sub(
+  "^(log_|logit_)", "", 
+  names(fit$forecast_args$opt_pars$params)
+)
+(fit$forecast_args$base_params
+ %>% describe_params
+ %>% filter(symbol %in% param_nms_to_opt)
+)
+```
+
+Use the following time-variation schedule for these parameters.
+```{r}
+fit$forecast_args$time_args$params_timevar
+```
+
+Here are the fitted coefficients on their original scales.
+```{r}
+coef(fit, 'fitted')
+```
+The `time_params` in this particular case refer to changing transmission rate. The first change in transmission rate is lower than the baseline, consistent with restrictions being implemented on the associated date. The second change is higher, which seems to be consistent with lifting restrictions on that date.
+
+The fits to case reports fits better to the second peak than the first.
+```{r}
+plot_forecast(fitted_data, "report", observed_data)
+```
+
+The fits to hospital occupancy.
+```{r}
+plot_forecast(fitted_data, "H", observed_data)
+```
+
+The fits to deaths is pretty bad -- not sure why.
+```{r}
+plot_forecast(fitted_data, "death", observed_data)
+```
