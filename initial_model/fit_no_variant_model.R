@@ -2,6 +2,7 @@ library(tidyr)
 library(dplyr)
 library(McMasterPandemic)
 library(ggplot2)
+#setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
 source('get_data.R')
 source('functions.R')
 
@@ -20,11 +21,12 @@ params["N"] = 522453  # nfld population
 params = fix_pars(params)
 
 end_date = max(observed_data$date)
-start_date_offset = 90
+#Changing from 90 to 15 improves fit substantially
+start_date_offset = 15
 start_date = min(observed_data$date) - start_date_offset
 
 params_timevar = data.frame(
-  Date = c("2022-01-04", "2022-02-14"), # dates of breakpoints
+  Date = c("2022-01-04", "2022-02-17"), # dates of breakpoints
   Symbol = "beta0",                     # parameters to vary
   Value = c(NA, NA),                    # NA means calibrate to data
   Type = "abs"                          # abs = change to value in Value col

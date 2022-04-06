@@ -28,15 +28,15 @@ Here are the fitted coefficients on their original scales.
     coef(fit, 'fitted')
 
     ## $params
-    ##     beta0        mu      phi1 
-    ## 0.3229931 0.9984272 0.5968836 
+    ##        beta0           mu         phi1 
+    ## 0.6227890334 0.9976471311 0.0009304334 
     ## 
     ## $time_params
-    ## [1] 0.2619234 0.5327873
+    ## [1] 0.2135656 0.7366372
     ## 
     ## $nb_disp
-    ##     death         H    report 
-    ## 0.1222867 0.6630563 2.3977099
+    ##        death            H       report 
+    ##    0.7988247 1354.5634680    2.7117786
 
 The `time_params` in this particular case refer to changing transmission
 rate. The first change in transmission rate is lower than the baseline,
@@ -56,7 +56,7 @@ The fits to hospital occupancy.
 
     plot_forecast(fitted_data, "H", observed_data)
 
-    ## Warning: Removed 14 rows containing missing values (geom_point).
+    ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](initial_model_files/figure-markdown_strict/unnamed-chunk-6-1.png)
 

@@ -14,7 +14,8 @@ library(tidyr)
 library(dplyr)
 library(McMasterPandemic)
 library(ggplot2)
-source('../functions.R')
+setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
+source('functions.R')
 observed_data = readRDS('observed_data.rds')
 fit = readRDS('fit.rds')
 fitted_data = readRDS('fitted_data.rds')
@@ -59,7 +60,7 @@ The fits to hospital occupancy.
 plot_forecast(fitted_data, "H", observed_data)
 ```
 
-The fits to deaths is pretty bad -- not sure why.
+The fits to deaths is pretty bad -- not sure why.[AH: Maybe for deaths we should visualize cumulative numbers - hard to understand where the mean is with 0's in there]
 ```{r}
 plot_forecast(fitted_data, "death", observed_data)
 ```
