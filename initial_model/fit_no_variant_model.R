@@ -2,7 +2,7 @@ library(tidyr)
 library(dplyr)
 library(McMasterPandemic)
 library(ggplot2)
-#setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
+setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
 source('get_data.R')
 source('functions.R')
 

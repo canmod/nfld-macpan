@@ -52,15 +52,19 @@ The `time_params` in this particular case refer to changing transmission rate. T
 
 The fits to case reports fits better to the second peak than the first.
 ```{r}
-plot_forecast(fitted_data, "report", observed_data)
+plot_forecast(fitted_data, "report", observed_data)+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+ylab("Reported cases")
 ```
 
 The fits to hospital occupancy.
 ```{r}
-plot_forecast(fitted_data, "H", observed_data)
+plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")
 ```
 
 The fits to deaths is pretty bad -- not sure why.[AH: Maybe for deaths we should visualize cumulative numbers - hard to understand where the mean is with 0's in there]
 ```{r}
-plot_forecast(fitted_data, "death", observed_data)
+plot_forecast(fitted_data, "death", observed_data) +
+  ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")
 ```
