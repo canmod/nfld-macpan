@@ -14,5 +14,4 @@ plot_forecast = function(forecast, variable, data, fit_end_date = max(data$date)
    + labs(y = variable)
    + theme(axis.title.x = element_blank())
   )
-
 }
