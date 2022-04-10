@@ -60,6 +60,16 @@ The fits to hospital occupancy.
 ```{r}
 plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
   theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+
+hospitalizations = filter(observed_data,var=="H")
+fitted_hosp = filter(fitted_data,var=="H")
+
+gH = ggplot()+
+  geom_ribbon(data=fitted_hosp, aes(x=as.Date(date),ymin=lwr, ymax=upr), alpha = 0.5, fill = "aquamarine")+
+  geom_point(data=hospitalizations, aes(x=as.Date(date),y=value), col = "aquamarine")+
+  geom_line(data=fitted_hosp,aes(x=as.Date(date), y=value), col = "aquamarine")+ylab("Hospital occupancy")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="aquamarine", lty=2)
+
 ```
 
 AH: I coded g1 to show fit to weekly deaths
