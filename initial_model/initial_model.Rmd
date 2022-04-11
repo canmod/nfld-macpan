@@ -2,7 +2,7 @@
 title: "Initial Model"
 author: "Steve Walker and Amy Hurford"
 date: "06/04/2022"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}

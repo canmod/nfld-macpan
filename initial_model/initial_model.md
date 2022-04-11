@@ -1,3 +1,5 @@
+# Calibration
+
 Optimize the following parameters at the following starting values.
 
     fit$forecast_args$opt_pars$params
@@ -22,17 +24,15 @@ Use the following time-variation schedule for these parameters.
     ##         Date Symbol Value Type
     ## 1 2022-01-04  beta0    NA  abs
     ## 2 2022-02-17  beta0    NA  abs
-<<<<<<< Updated upstream
     ## 3 2022-03-14  beta0    NA  abs
-=======
->>>>>>> Stashed changes
+
+# Model Fit
 
 Here are the fitted coefficients on their original scales.
 
     coef(fit, 'fitted')
 
     ## $params
-<<<<<<< Updated upstream
     ##     beta0        mu      phi1 
     ## 0.5721508 0.9970789 0.2295066 
     ## 
@@ -42,17 +42,6 @@ Here are the fitted coefficients on their original scales.
     ## $nb_disp
     ##     death         H    report 
     ## 0.2036977 6.0570224 0.5616794
-=======
-    ##       beta0          mu        phi1 
-    ## 0.619218048 0.997596661 0.001270577 
-    ## 
-    ## $time_params
-    ## [1] 0.2237218 0.7932058
-    ## 
-    ## $nb_disp
-    ##       death           H      report 
-    ##   0.4622854 106.0196782   2.2723556
->>>>>>> Stashed changes
 
 The `time_params` in this particular case refer to changing transmission
 rate. The first change in transmission rate is lower than the baseline,
@@ -64,11 +53,8 @@ The fits to case reports fits better to the second peak than the first.
 
     plot_forecast(fitted_data, "report", observed_data)+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
       theme(axis.text.x = element_text(angle = 90),legend.position = "none")+ylab("Reported cases")
-<<<<<<< Updated upstream
 
     ## Warning: Removed 15 row(s) containing missing values (geom_path).
-=======
->>>>>>> Stashed changes
 
 ![](initial_model_files/figure-markdown_strict/unnamed-chunk-5-1.png)
 
@@ -81,7 +67,6 @@ The fits to hospital occupancy.
 
 ![](initial_model_files/figure-markdown_strict/unnamed-chunk-6-1.png)
 
-<<<<<<< Updated upstream
     hospitalizations = filter(observed_data,var=="H")
     fitted_hosp = filter(fitted_data,var=="H")
 
@@ -112,18 +97,34 @@ AH: I coded g1 to show fit to weekly deaths
       theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="grey", lty=2)
 
     g1
-=======
-The fits to deaths is pretty bad – not sure why.\[AH: Maybe for deaths
-we should visualize cumulative numbers - hard to understand where the
-mean is with 0’s in there\]
->>>>>>> Stashed changes
 
-    plot_forecast(fitted_data, "death", observed_data) +
-      ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
-      theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+    ## Warning: Removed 1 row(s) containing missing values (geom_path).
 
 ![](initial_model_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
     # plot_forecast(fitted_data, "death", observed_data) +
     #   ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
     #   theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+
+# Forecasts
+
+Project forecasts 14 days beyond the last observed date used to produce
+the fitting model.
+
+    plot_forecast(forecast_data, "report", observed_data) +
+      ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+      theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+
+![](initial_model_files/figure-markdown_strict/unnamed-chunk-8-1.png)
+
+    plot_forecast(forecast_data, "H", observed_data) +
+      ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+      theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+
+![](initial_model_files/figure-markdown_strict/unnamed-chunk-9-1.png)
+
+    plot_forecast(forecast_data, "death", observed_data) +
+      ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+      theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+
+![](initial_model_files/figure-markdown_strict/unnamed-chunk-10-1.png)
