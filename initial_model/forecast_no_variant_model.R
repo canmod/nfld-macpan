@@ -32,7 +32,3 @@ fit$forecast_args$sim_args$flexmodel = model
 forecast_data = forecast_ensemble(fit, nsim = 200)
 saveRDS(forecast_data, 'initial_model/forecast_data.rds')
 saveRDS(forecast_period, 'initial_model/forecast_period.rds')
-
-plot_forecast(forecast_data, "H", observed_data) +
-  ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
-  theme(axis.text.x = element_text(angle = 90),legend.position = "none")
