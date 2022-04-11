@@ -21,22 +21,23 @@ Use the following time-variation schedule for these parameters.
 
     ##         Date Symbol Value Type
     ## 1 2022-01-04  beta0    NA  abs
-    ## 2 2022-02-14  beta0    NA  abs
+    ## 2 2022-02-17  beta0    NA  abs
+    ## 3 2022-03-14  beta0    NA  abs
 
 Here are the fitted coefficients on their original scales.
 
     coef(fit, 'fitted')
 
     ## $params
-    ##        beta0           mu         phi1 
-    ## 0.6227890334 0.9976471311 0.0009304334 
+    ##     beta0        mu      phi1 
+    ## 0.5721508 0.9970789 0.2295066 
     ## 
     ## $time_params
-    ## [1] 0.2135656 0.7366372
+    ## [1] 0.1948662 0.5089257 0.1679335
     ## 
     ## $nb_disp
-    ##        death            H       report 
-    ##    0.7988247 1354.5634680    2.7117786
+    ##     death         H    report 
+    ## 0.2036977 6.0570224 0.5616794
 
 The `time_params` in this particular case refer to changing transmission
 rate. The first change in transmission rate is lower than the baseline,
@@ -46,7 +47,8 @@ restrictions on that date.
 
 The fits to case reports fits better to the second peak than the first.
 
-    plot_forecast(fitted_data, "report", observed_data)
+    plot_forecast(fitted_data, "report", observed_data)+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+      theme(axis.text.x = element_text(angle = 90),legend.position = "none")+ylab("Reported cases")
 
     ## Warning: Removed 15 row(s) containing missing values (geom_path).
 
@@ -54,16 +56,48 @@ The fits to case reports fits better to the second peak than the first.
 
 The fits to hospital occupancy.
 
-    plot_forecast(fitted_data, "H", observed_data)
+    plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+      theme(axis.text.x = element_text(angle = 90),legend.position = "none")
 
-    ## Warning: Removed 15 rows containing missing values (geom_point).
+    ## Warning: Removed 16 rows containing missing values (geom_point).
 
 ![](initial_model_files/figure-markdown_strict/unnamed-chunk-6-1.png)
 
-The fits to deaths is pretty bad – not sure why.
+    hospitalizations = filter(observed_data,var=="H")
+    fitted_hosp = filter(fitted_data,var=="H")
 
-    plot_forecast(fitted_data, "death", observed_data)
+    gH = ggplot()+
+      geom_ribbon(data=fitted_hosp, aes(x=as.Date(date),ymin=lwr, ymax=upr), alpha = 0.5, fill = "aquamarine")+
+      geom_point(data=hospitalizations, aes(x=as.Date(date),y=value), col = "aquamarine")+
+      geom_line(data=fitted_hosp,aes(x=as.Date(date), y=value), col = "aquamarine")+ylab("Hospital occupancy")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+      theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="aquamarine", lty=2)
+
+AH: I coded g1 to show fit to weekly deaths
+
+    library(lubridate)
+
+    ## 
+    ## Attaching package: 'lubridate'
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     date, intersect, setdiff, union
+
+    deaths = filter(observed_data,var=="death")%>%group_by(week = cut(date, "week")) %>% summarise(value = sum(value))
+    fitted_deaths = filter(fitted_data,var=="death")
+
+    g1 = ggplot()+
+      geom_ribbon(data=fitted_deaths, aes(x=as.Date(date),ymin=7*lwr, ymax=7*upr), alpha = 0.5, fill = "plum3")+
+      geom_point(data=deaths, aes(x=as.Date(week),y=value), col = "plum3")+
+      geom_line(data=fitted_deaths,aes(x=as.Date(date), y=7*value), col = "plum3")+ylab("deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+      theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="grey", lty=2)
+
+    g1
 
     ## Warning: Removed 1 row(s) containing missing values (geom_path).
 
 ![](initial_model_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+
+    # plot_forecast(fitted_data, "death", observed_data) +
+    #   ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+    #   theme(axis.text.x = element_text(angle = 90),legend.position = "none")
