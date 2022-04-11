@@ -2,9 +2,7 @@ library(tidyr)
 library(dplyr)
 library(McMasterPandemic)
 library(ggplot2)
-if(basename(getwd()) != "nfld-macpan") {
-  setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
-}
+devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
 source('get_data.R')
 source('functions.R')
 
