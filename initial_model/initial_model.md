@@ -128,3 +128,16 @@ the fitting model.
       theme(axis.text.x = element_text(angle = 90),legend.position = "none")
 
 ![](initial_model_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+
+    deaths = filter(observed_data,var=="death")%>%group_by(week = cut(date, "week")) %>% summarise(value = sum(value))
+    forecast_deaths = filter(forecast_data,var=="death")
+
+    g1 = ggplot()+
+      geom_ribbon(data=forecast_deaths, aes(x=as.Date(date),ymin=7*lwr, ymax=7*upr), alpha = 0.5, fill = "plum3")+
+      geom_point(data=deaths, aes(x=as.Date(week),y=value), col = "plum3")+
+      geom_line(data=forecast_deaths,aes(x=as.Date(date), y=7*value), col = "plum3")+ylab("deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+      theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="grey", lty=2)
+
+    g1
+
+![](initial_model_files/figure-markdown_strict/unnamed-chunk-10-2.png)
