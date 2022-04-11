@@ -1,0 +1,38 @@
+---
+title: "Vax Model"
+author: "Steve Walker and Amy Hurford"
+date: "11/04/2022"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r dependencies, message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyr)
+library(dplyr)
+library(McMasterPandemic)
+library(ggplot2)
+devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
+source('../functions.R')
+observed_data = readRDS('observed_data.rds')
+fit = readRDS('fit.rds')
+fitted_data = readRDS('fitted_data.rds')
+```
+
+```{r}
+plot_forecast(fitted_data, "report", observed_data) +
+  ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+
+plot_forecast(fitted_data, "H", observed_data) +
+  ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+
+plot_forecast(fitted_data, "death", observed_data) +
+  ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+```
