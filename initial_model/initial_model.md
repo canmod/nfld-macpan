@@ -59,15 +59,15 @@ coef(fit, 'fitted')
 
 ```
 ## $params
-##     beta0        mu      phi1 
-## 0.5721508 0.9970789 0.2295066 
+##      beta0         mu       phi1 
+## 0.59090578 0.99707312 0.08709398 
 ## 
 ## $time_params
-## [1] 0.1948662 0.5089257 0.1679335
+## [1] 0.1970773 0.5860090 0.1996970
 ## 
 ## $nb_disp
-##     death         H    report 
-## 0.2036977 6.0570224 0.5616794
+##      death          H     report 
+##   1.214066 290.206078   1.023326
 ```
 The `time_params` in this particular case refer to changing transmission rate. The first change in transmission rate is lower than the baseline, consistent with restrictions being implemented on the associated date. The second change is higher, which seems to be consistent with lifting restrictions on that date.
 
@@ -92,7 +92,7 @@ plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")+  scal
 ```
 
 ```
-## Warning: Removed 16 rows containing missing values (geom_point).
+## Warning: Removed 18 rows containing missing values (geom_point).
 ```
 
 ![](initial_model_files/figure-html/unnamed-chunk-6-1.png)<!-- -->

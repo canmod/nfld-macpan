@@ -2,6 +2,7 @@ library(tidyr)
 library(dplyr)
 library(McMasterPandemic)
 library(ggplot2)
+setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
 devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
 source('get_data.R')
 source('functions.R')
@@ -26,9 +27,9 @@ start_date_offset = 15
 start_date = min(observed_data$date) - start_date_offset
 
 params_timevar = data.frame(
-  Date = c("2022-01-04", "2022-02-17", "2022-03-14"), # dates of breakpoints
+  Date = c("2022-01-04", "2022-02-17"), # dates of breakpoints
   Symbol = "beta0",                     # parameters to vary
-  Value = c(NA, NA, NA),                    # NA means calibrate to data
+  Value = c(NA, NA),                    # NA means calibrate to data
   Type = "abs"                          # abs = change to value in Value col
 )
 
@@ -67,3 +68,4 @@ fitted_data = forecast_ensemble(fit, nsim = 200)
 saveRDS(observed_data, "initial_model/observed_data.rds")
 saveRDS(fit, "initial_model/fit.rds")
 saveRDS(fitted_data, "initial_model/fitted_data.rds")
+saveRDS(scenario_data, "initial_model/scenario.rds")

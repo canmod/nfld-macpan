@@ -98,3 +98,5 @@ g1
 #   ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
 #   theme(axis.text.x = element_text(angle = 90),legend.position = "none")
 ```
+
+
