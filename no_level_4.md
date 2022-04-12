@@ -33,7 +33,7 @@ params$beta0 = as.numeric(unname(coef(fit, 'fitted')$params[1]))
 params$mu = as.numeric(unname(coef(fit, 'fitted')$params[2]))
 params$phi1 = as.numeric(unname(coef(fit, 'fitted')$params[3]))
 
-end_date = max(observed_data$date)+14
+end_date = max(observed_data$date)
 #Changing from 90 to 15 improves fit substantially
 start_date_offset = 15
 start_date = min(observed_data$date) - start_date_offset
@@ -71,7 +71,7 @@ cum_cases = filter(fitted_data,var=="cumRep")
 
 ![](no_level_4_files/figure-html/unnamed-chunk-4-1.png)<!-- -->![](no_level_4_files/figure-html/unnamed-chunk-4-2.png)<!-- -->![](no_level_4_files/figure-html/unnamed-chunk-4-3.png)<!-- -->
 
-**Figure 1. The effect of the alert level 4 was to create a two-peaked wave 5 of prolonged duration in Newfoundland and Labrador.** Without the implementation of the Alert level 4 on January 4, 2022 (black lines), Newfoundland and Labrador would have experienced a wave 5 similar to other provinces: with a higher peak and dropping to prevalence in early March. With the implementation of the Alert level 4, and the subsequent easing of restrictions, i.e. phased re-opening beginning on February 14, 2022, Newfoundland and Labrador created a two-peaked wave of longer duration.
+**Figure 1. The effect of restrictions in early-January in Newfoundland and Labrador was to create a two-peaked wave 5 of prolonged duration that protected health care capacity.** Without the implementation of the Alert level 4 on January 4, 2022 (black lines), Newfoundland and Labrador would have experienced a wave 5 similar to other provinces: with a higher peak declining to low prevalence in mid-February.  The implementation of the Alert level 4, and the subsequent easing of restrictions, meant that Newfoundland and Labrador has experienced a two-peaked wave of longer duration. With the restrictions in early-January, the peak number of hospitalizations was reduced, protecting health care capacity. The total number of cases and deaths was only slightly reduced, suggesting that the predominant effect of the restrictions was to delay, rather than prevent, cases and severe illness.
 
 
 ![](no_level_4_files/figure-html/unnamed-chunk-5-1.png)<!-- -->

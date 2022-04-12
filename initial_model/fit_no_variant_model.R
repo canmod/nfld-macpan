@@ -21,7 +21,7 @@ params = read_params("PHAC.csv")
 params["N"] = 522453  # nfld population
 params = fix_pars(params)
 
-end_date = max(observed_data$date)+14
+end_date = max(observed_data$date)
 #Changing from 90 to 15 improves fit substantially
 start_date_offset = 15
 start_date = min(observed_data$date) - start_date_offset
