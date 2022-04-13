@@ -11,16 +11,40 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r dependencies, message=FALSE, echo=FALSE, warning=FALSE}
+
+```{r, message = FALSE, warning=FALSE, include=FALSE}
 library(tidyr)
 library(dplyr)
 library(McMasterPandemic)
 library(ggplot2)
-devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
-source('../functions.R')
-observed_data = readRDS('observed_data.rds')
-fit = readRDS('fit.rds')
-fitted_data = readRDS('fitted_data.rds')
+library(lubridate)
+library(patchwork)
+setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
+source('get_data.R')
+source('functions.R')
+fit = readRDS('initial_model/fit.rds')
+fitted_data = readRDS('initial_model/fitted_data.rds')
+observed_data = readRDS('initial_model/observed_data.rds')
+
+params = read_params("PHAC.csv")
+params["N"] = 522453  # nfld population
+params = fix_pars(params)
+
+end_date = max(observed_data$date)+14
+#Changing from 90 to 15 improves fit substantially
+start_date_offset = 15
+start_date = min(observed_data$date) - start_date_offset
+
+params_timevar = data.frame(
+  Date = c("2022-01-04", "2022-02-17"), # dates of breakpoints
+  Symbol = "beta0",                     # parameters to vary
+  Value = c(NA, NA),                    # NA means calibrate to data
+  Type = "abs"                          # abs = change to value in Value col
+)
+
+state <- make_state(params=params)
+res1 <- run_sim(params=params,params_timevar=params_timevar,state=state, start_date=start_date, end_date=end_date)
+scenario = data.frame(date=res1$date,H=res1$H, D = res1$death, report = res1$report)
 ```
 
 
