@@ -38,9 +38,9 @@ start_date = min(observed_data$date) - start_date_offset
 
 # The breakpoint on Jan 4 is removed
 params_timevar = data.frame(
-  Date = c("2022-02-17"), # dates of breakpoints
+  Date = tail(fit$forecast_args$time_args$params_timevar$Date, -1), # dates of breakpoints
   Symbol = "beta0",                     # parameters to vary
-  Value = coef(fit, 'fitted')$time_params,                    # NA means calibrate to data
+  Value = tail(coef(fit, 'fitted')$time_params, -1),                    # NA means calibrate to data
   Type = "abs"                          # abs = change to value in Value col
 )
 

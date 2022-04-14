@@ -35,6 +35,7 @@ end_date = max(observed_data$date)+14
 start_date_offset = 15
 start_date = min(observed_data$date) - start_date_offset
 L = length(seq(as.Date(start_date),as.Date(end_date),by="days"))
+
 L1 = length(seq(as.Date(start_date), as.Date("2022-01-04")))
 L2 = length(seq(as.Date(start_date), as.Date("2022-02-17")))
 
