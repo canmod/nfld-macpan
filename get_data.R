@@ -27,6 +27,7 @@ in.hospital = c(data4$currently_hospitalized, data6$hosp.occ)
 
 cases = c(data4$new_provincial_cases, data6$cases)
 
+
 ## Change cumulative deaths to new deaths
 
 new.death = diff(c(0,data4$total_deaths, data6$cum.death))

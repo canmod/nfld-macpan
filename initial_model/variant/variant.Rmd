@@ -22,9 +22,9 @@ library(patchwork)
 setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
 source('get_data.R')
 source('functions.R')
-fit = readRDS('initial_model/fit.rds')
-fitted_data = readRDS('initial_model/fitted_data.rds')
-observed_data = readRDS('initial_model/observed_data.rds')
+fit = readRDS('fit.rds')
+fitted_data = readRDS('fitted_data.rds')
+observed_data = readRDS('observed_data.rds')
 
 params = read_params("PHAC.csv")
 params["N"] = 522453  # nfld population
@@ -34,11 +34,14 @@ end_date = max(observed_data$date)+14
 #Changing from 90 to 15 improves fit substantially
 start_date_offset = 15
 start_date = min(observed_data$date) - start_date_offset
+L = length(seq(as.Date(start_date),as.Date(end_date),by="days"))
+L1 = length(seq(as.Date(start_date), as.Date("2022-01-04")))
+L2 = length(seq(as.Date(start_date), as.Date("2022-02-17")))
 
 params_timevar = data.frame(
-  Date = c("2022-01-04", "2022-02-17"), # dates of breakpoints
+  Date = seq(as.Date(start_date),as.Date(end_date),by="days"), # dates of breakpoints
   Symbol = "beta0",                     # parameters to vary
-  Value = c(NA, NA),                    # NA means calibrate to data
+  Value = rep(0, L),                   
   Type = "abs"                          # abs = change to value in Value col
 )
 

@@ -25,7 +25,7 @@ fit$forecast_args$opt_pars$params
 ```
 Prefixing by `log_` or `logit_` means we are optimizing on these scales.
 
-These parameters have the following meanings (TODO: the description for phi1 looks wrong).
+These parameters have the following meanings (TODO: the description for phi1 looks wrong). [AH: would be helpful to print out more parameters here, recovery rate, duration of pre-symptomatic, etc]
 
 ```
 ##   symbol value                                                    meaning
@@ -34,7 +34,7 @@ These parameters have the following meanings (TODO: the description for phi1 loo
 ## 3   phi1  0.76                          Fraction of hospital cases to ICU
 ```
 
-Use the following time-variation schedule for these parameters.
+Use the following time-variation schedule for these parameters. These correspond to the implementation of Alert level 4, and the beginning of phased re-opening, and without these breakpoints the model cannot fit the data. These suggests these NPIs were important in shaping the dynamics of the early Omicron wave in NL.
 
 ```r
 fit$forecast_args$time_args$params_timevar
@@ -44,7 +44,6 @@ fit$forecast_args$time_args$params_timevar
 ##         Date Symbol Value Type
 ## 1 2022-01-04  beta0    NA  abs
 ## 2 2022-02-17  beta0    NA  abs
-## 3 2022-03-14  beta0    NA  abs
 ```
 
 
@@ -60,22 +59,22 @@ coef(fit, 'fitted')
 ```
 ## $params
 ##      beta0         mu       phi1 
-## 0.59090578 0.99707312 0.08709398 
+## 0.59173336 0.99730338 0.03826483 
 ## 
 ## $time_params
-## [1] 0.1970773 0.5860090 0.1996970
+## [1] 0.2190143 0.5792498
 ## 
 ## $nb_disp
-##      death          H     report 
-##   1.214066 290.206078   1.023326
+##        death            H        cases 
+## 7.995522e-01 1.828933e+04 1.153061e-02
 ```
 The `time_params` in this particular case refer to changing transmission rate. The first change in transmission rate is lower than the baseline, consistent with restrictions being implemented on the associated date. The second change is higher, which seems to be consistent with lifting restrictions on that date.
 
-The fits to case reports fits better to the second peak than the first.
+Statements made by the government conflicted with reported cases, so I did not fit to cases at all. However, even without fitting to cases, the fit matches quite well with cases. Changes to PCR eligibility were announced on March 17, and after this time the number of PCR tests per day has declined linearly.
 
 ```r
-plot_forecast(fitted_data, "report", observed_data)+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
-  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+ylab("Reported cases")
+observed_cases = filter(observed_data2,var=="report")
+plot_forecast(fitted_data, "report", observed_data)+ylab("Reported cases")+geom_point(data=observed_cases, aes(x=as.Date(date),y=value), col = "dodgerblue", alpha=0.3)
 ```
 
 ```
@@ -87,28 +86,16 @@ plot_forecast(fitted_data, "report", observed_data)+  scale_x_date(date_breaks =
 The fits to hospital occupancy.
 
 ```r
-plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
-  theme(axis.text.x = element_text(angle = 90),legend.position = "none")
+plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")
 ```
 
 ```
-## Warning: Removed 18 rows containing missing values (geom_point).
+## Warning: Removed 19 rows containing missing values (geom_point).
 ```
 
 ![](initial_model_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
-```r
-hospitalizations = filter(observed_data,var=="H")
-fitted_hosp = filter(fitted_data,var=="H")
-
-gH = ggplot()+
-  geom_ribbon(data=fitted_hosp, aes(x=as.Date(date),ymin=lwr, ymax=upr), alpha = 0.5, fill = "aquamarine")+
-  geom_point(data=hospitalizations, aes(x=as.Date(date),y=value), col = "aquamarine")+
-  geom_line(data=fitted_hosp,aes(x=as.Date(date), y=value), col = "aquamarine")+ylab("Hospital occupancy")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
-  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="aquamarine", lty=2)
-```
-
-AH: I coded g1 to show fit to weekly deaths
+Sorry, Steve, this is a messy place to put this.
 
 ```r
 library(lubridate)
@@ -130,9 +117,9 @@ deaths = filter(observed_data,var=="death")%>%group_by(week = cut(date, "week"))
 fitted_deaths = filter(fitted_data,var=="death")
 
 g1 = ggplot()+
-  geom_ribbon(data=fitted_deaths, aes(x=as.Date(date),ymin=7*lwr, ymax=7*upr), alpha = 0.5, fill = "plum3")+
-  geom_point(data=deaths, aes(x=as.Date(week),y=value), col = "plum3")+
-  geom_line(data=fitted_deaths,aes(x=as.Date(date), y=7*value), col = "plum3")+ylab("deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  geom_ribbon(data=fitted_deaths, aes(x=as.Date(date),ymin=7*lwr, ymax=7*upr), alpha = 0.3, fill = "dodgerblue")+
+  geom_point(data=deaths, aes(x=as.Date(week),y=value), fill = "white", pch=21)+
+  geom_line(data=fitted_deaths,aes(x=as.Date(date), y=7*value), col = "dodgerblue")+ylab("deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
   theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="grey", lty=2)
 
 g1
@@ -149,3 +136,5 @@ g1
 #   ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
 #   theme(axis.text.x = element_text(angle = 90),legend.position = "none")
 ```
+
+
