@@ -74,26 +74,15 @@ Statements made by the government conflicted with reported cases, so I did not f
 
 ```r
 observed_cases = filter(observed_data2,var=="report")
-plot_forecast(fitted_data, "report", observed_data)+ylab("Reported cases")+geom_point(data=observed_cases, aes(x=as.Date(date),y=value), col = "dodgerblue", alpha=0.3)
+gC=plot_forecast(fitted_data, "report", observed_data)+ylab("Reported cases")
+#+geom_point(data=observed_cases, aes(x=as.Date(date),y=value), col = "dodgerblue", alpha=0.3)
 ```
-
-```
-## Warning: Removed 15 row(s) containing missing values (geom_path).
-```
-
-![](initial_model_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 The fits to hospital occupancy.
 
 ```r
-plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")
+gH=plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")
 ```
-
-```
-## Warning: Removed 19 rows containing missing values (geom_point).
-```
-
-![](initial_model_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 Sorry, Steve, this is a messy place to put this.
 
@@ -137,4 +126,9 @@ g1
 #   theme(axis.text.x = element_text(angle = 90),legend.position = "none")
 ```
 
+```r
+gC/gH/g1
+```
+
+![](initial_model_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 

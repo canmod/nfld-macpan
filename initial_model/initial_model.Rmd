@@ -16,6 +16,7 @@ library(tidyr)
 library(dplyr)
 library(McMasterPandemic)
 library(ggplot2)
+library(patchwork)
 devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
 source('../functions.R')
 observed_data = readRDS('../observed_data.rds')
@@ -62,12 +63,13 @@ The `time_params` in this particular case refer to changing transmission rate. T
 Statements made by the government conflicted with reported cases, so I did not fit to cases at all. However, even without fitting to cases, the fit matches quite well with cases. Changes to PCR eligibility were announced on March 17, and after this time the number of PCR tests per day has declined linearly.
 ```{r}
 observed_cases = filter(observed_data2,var=="report")
-plot_forecast(fitted_data, "report", observed_data)+ylab("Reported cases")+geom_point(data=observed_cases, aes(x=as.Date(date),y=value), col = "dodgerblue", alpha=0.3)
+gC=plot_forecast(fitted_data, "report", observed_data)+ylab("Reported cases")
+#+geom_point(data=observed_cases, aes(x=as.Date(date),y=value), col = "dodgerblue", alpha=0.3)
 ```
 
 The fits to hospital occupancy.
 ```{r}
-plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")
+gH=plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")
 
 ```
 
@@ -89,5 +91,7 @@ g1
 #   ylab("Deaths")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
 #   theme(axis.text.x = element_text(angle = 90),legend.position = "none")
 ```
-
+```{r, fig.height=8, warning=FALSE}
+gC/gH/g1
+```
 

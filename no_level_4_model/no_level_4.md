@@ -15,7 +15,7 @@ output:
 
 ![](no_level_4_files/figure-html/unnamed-chunk-4-1.png)<!-- -->![](no_level_4_files/figure-html/unnamed-chunk-4-2.png)<!-- -->![](no_level_4_files/figure-html/unnamed-chunk-4-3.png)<!-- -->
 
-**Figure 1. The effect of restrictions in early-January in Newfoundland and Labrador was a two-peaked BA.1 Omicron variant wave of prolonged duration that protected health care capacity.** The implementation of the Alert level 4 on January 4, 2022, and the subsequent easing of restrictions on February 14, 2022, meant that Newfoundland and Labrador has experienced a two-peaked BA.1 wave of longer duration. These restrictions helped to protect health care capacity by reducing the number of concurrent hospitalizations. With the restrictions, the total number of cases and deaths was only slightly reduced, suggesting that the predominant effect of the restrictions was to delay, rather than prevent, cases and severe illness.
+**Figure 1. The effect of restrictions in early-January in Newfoundland and Labrador was a two-peaked BA.1 Omicron variant wave of prolonged duration that protected health care capacity.** The implementation of the Alert level 4 on January 4, 2022, and the subsequent easing of restrictions on February 17, 2022, meant that Newfoundland and Labrador has experienced a two-peaked BA.1 wave of longer duration. These restrictions helped to protect health care capacity by reducing the number of concurrent hospitalizations. With the restrictions, the total number of cases and deaths was only slightly reduced, suggesting that the predominant effect of the restrictions was to delay, rather than prevent, cases and severe illness.
 
 Below are some awkwardly coded comparisons of cases and deaths.
 

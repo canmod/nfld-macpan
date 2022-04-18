@@ -1,0 +1,75 @@
+---
+title: "Variant Model"
+author: "Amy Hurford"
+date: "13/04/2022"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, message = FALSE, warning=FALSE, include=FALSE}
+library(tidyr)
+library(dplyr)
+library(McMasterPandemic)
+library(ggplot2)
+library(lubridate)
+library(patchwork)
+setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
+source('get_data.R')
+source('functions.R')
+fit = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/variant_model/variant_model_files/fit_var.rds')
+fitted_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/variant_model/variant_model_files/fitted_data_var.rds')
+observed_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/observed_data2.rds')
+```
+
+
+
+```{r}
+cases = filter(observed_data,var=="report")
+fitted_cases = filter(fitted_data,var=="report")
+p = var.frac(fitted_cases$date)$var.frac
+output = data.frame(date = fitted_cases$date, cases=fitted_cases$value, BA.2 = p*fitted_cases$value)
+
+g.var = ggplot()+
+  geom_line(data=cases,aes(x= as.Date(date),y=value), col = "blue", lwd=0.2)+
+  geom_point(data=cases,aes(x= as.Date(date),y=value), col = "blue", pch=21, fill = "white")+
+geom_ribbon(data= output, aes(x= as.Date(date), ymax = cases,ymin=0),fill = "darkblue", alpha = 0.3)+
+geom_ribbon(data= output, aes(x= as.Date(date), ymax = BA.2,ymin=0),fill = "blue", alpha = 0.3)+
+  annotate("text", x = as.Date("2022-03-08"), y = 200, label = "BA.1", col = "blue")+
+    annotate("text", x = as.Date("2022-03-28"), y = 100, label = "BA.2", col="darkblue")+
+  ylab("Reported new cases")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-01"), tail(as.Date(fitted_cases$date),1)))+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")
+
+```
+
+```{r}
+observed_cases = filter(observed_data2,var=="report")
+gC=plot_forecast(fitted_data, "report", observed_data)+ylab("Reported cases")
+#+geom_point(data=observed_cases, aes(x=as.Date(date),y=value), col = "dodgerblue", alpha=0.3)
+```
+
+The fits to hospital occupancy.
+```{r}
+gH=plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")
+
+```
+
+Sorry, Steve, this is a messy place to put this.
+```{r}
+library(lubridate)
+deaths = filter(observed_data,var=="death")%>%group_by(week = cut(date, "week")) %>% summarise(value = sum(value))
+fitted_deaths = filter(fitted_data,var=="death")
+
+g1 = ggplot()+
+  geom_ribbon(data=fitted_deaths, aes(x=as.Date(date),ymin=7*lwr, ymax=7*upr), alpha = 0.3, fill = "dodgerblue")+
+  geom_point(data=deaths, aes(x=as.Date(week),y=value), fill = "white", pch=21)+
+  geom_line(data=fitted_deaths,aes(x=as.Date(date), y=7*value), col = "dodgerblue")+ylab("deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="grey", lty=2)
+
+g1
+```
