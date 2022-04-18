@@ -82,7 +82,7 @@ observed_data2 = (NLdatahub
                  %>% pivot_longer(-date, names_to = "var")
 )
 
-saveRDS(observed_data, "initial_model/observed_data.rds")
-saveRDS(observed_data2, "initial_model/observed_data2.rds")
-saveRDS(fit, "initial_model/fit.rds")
-saveRDS(fitted_data, "initial_model/fitted_data.rds")
+saveRDS(observed_data, "initial_model/initial_model_files/observed_data.rds")
+saveRDS(observed_data2, "initial_model/initial_model_files/observed_data2.rds")
+saveRDS(fit, "initial_model/initial_model_files/fit.rds")
+saveRDS(fitted_data, "initial_model/initial_model_files/fitted_data.rds")

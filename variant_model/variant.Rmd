@@ -1,5 +1,6 @@
 ---
-title: "Variant Model"
+title: "Modelling COVID-19 in Newfoundland and Labrador"
+subtitle: Short-term forecasting
 author: "Amy Hurford"
 date: "13/04/2022"
 output: 
@@ -10,6 +11,10 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+This modelling was done in collaboration with Steve Walker, and fits a [compartmental epidemic model](https://mcmasterpandemic.shinyapps.io/mcmasterpandemicshiny/) to Newfoundland and Labrador COVID-19 data. This approach is used to model COVID-19 in [Ontario](https://mac-theobio.github.io/forecasts/outputs/McMasterOntarioForecastsBlog2022-01-26), however, there are differences in the model formulation for Newfoundland and Labrador. The software we used can be downloaded [here](https://github.com/mac-theobio/McMasterPandemic).
+
+More details will be added soon.
 
 
 ```{r, message = FALSE, warning=FALSE, include=FALSE}
@@ -29,47 +34,53 @@ observed_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects
 
 
 
-```{r}
+```{r, include=FALSE}
 cases = filter(observed_data,var=="report")
 fitted_cases = filter(fitted_data,var=="report")
 p = var.frac(fitted_cases$date)$var.frac
 output = data.frame(date = fitted_cases$date, cases=fitted_cases$value, BA.2 = p*fitted_cases$value)
 
 g.var = ggplot()+
-  geom_line(data=cases,aes(x= as.Date(date),y=value), col = "blue", lwd=0.2)+
-  geom_point(data=cases,aes(x= as.Date(date),y=value), col = "blue", pch=21, fill = "white")+
-geom_ribbon(data= output, aes(x= as.Date(date), ymax = cases,ymin=0),fill = "darkblue", alpha = 0.3)+
+  #geom_point(data=cases,aes(x= as.Date(date),y=value), col = "black", pch=21, fill = "white")+
+geom_vline(aes(xintercept = tail(observed_data$date,1)),
+                colour = "grey60", linetype = "dashed")+
+geom_ribbon(data= output, aes(x= as.Date(date), ymax = cases,ymin=0),fill = "dodgerblue", alpha = 0.3)+
+  geom_line(data= output, aes(x= as.Date(date), y = cases),col = "dodgerblue", alpha = 0.3)+
 geom_ribbon(data= output, aes(x= as.Date(date), ymax = BA.2,ymin=0),fill = "blue", alpha = 0.3)+
-  annotate("text", x = as.Date("2022-03-08"), y = 200, label = "BA.1", col = "blue")+
+  annotate("text", x = as.Date("2022-03-08"), y = 200, label = "BA.1", col = "dodgerblue")+
     annotate("text", x = as.Date("2022-03-28"), y = 100, label = "BA.2", col="darkblue")+
-  ylab("Reported new cases")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-01"), tail(as.Date(fitted_cases$date),1)))+
+  ylab("Est. reported new cases (daily)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))+
   theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")
 
 ```
 
-```{r}
-observed_cases = filter(observed_data2,var=="report")
-gC=plot_forecast(fitted_data, "report", observed_data)+ylab("Reported cases")
+```{r, include=FALSE}
+observed_cases = filter(observed_data,var=="report")
+gC=plot_forecast(fitted_data, "report", observed_data)+ylab("Est. reported new cases (daily)")+scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))
 #+geom_point(data=observed_cases, aes(x=as.Date(date),y=value), col = "dodgerblue", alpha=0.3)
 ```
 
-The fits to hospital occupancy.
-```{r}
-gH=plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")
+
+```{r, include=FALSE}
+gH=plot_forecast(fitted_data, "H", observed_data)+ylab("Fitted hospital occupancy")+scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))
 
 ```
 
-Sorry, Steve, this is a messy place to put this.
-```{r}
+
+```{r, include=FALSE}
 library(lubridate)
 deaths = filter(observed_data,var=="death")%>%group_by(week = cut(date, "week")) %>% summarise(value = sum(value))
 fitted_deaths = filter(fitted_data,var=="death")
 
 g1 = ggplot()+
   geom_ribbon(data=fitted_deaths, aes(x=as.Date(date),ymin=7*lwr, ymax=7*upr), alpha = 0.3, fill = "dodgerblue")+
+  geom_line(data=fitted_deaths,aes(x=as.Date(date), y=7*value), col = "dodgerblue")+ylab("Fitted deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))+
   geom_point(data=deaths, aes(x=as.Date(week),y=value), fill = "white", pch=21)+
-  geom_line(data=fitted_deaths,aes(x=as.Date(date), y=7*value), col = "dodgerblue")+ylab("deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
   theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="grey", lty=2)
 
 g1
+```
+
+```{r, fig.height=8, warning=FALSE, include=FALSE}
+g.var/gH/g1
 ```
