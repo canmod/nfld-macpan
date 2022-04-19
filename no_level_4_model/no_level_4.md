@@ -1,7 +1,7 @@
 ---
 title: "Newfoundland and Labrador's two-peaked BA.1 wave"
 author: "Amy Hurford and Steve Walker"
-date: "12/04/2022"
+date: "18/04/2022"
 output: 
   html_document: 
     keep_md: yes
@@ -13,23 +13,65 @@ output:
 
 
 
-![](no_level_4_files/figure-html/unnamed-chunk-4-1.png)<!-- -->![](no_level_4_files/figure-html/unnamed-chunk-4-2.png)<!-- -->![](no_level_4_files/figure-html/unnamed-chunk-4-3.png)<!-- -->
-
-**Figure 1. The effect of restrictions in early-January in Newfoundland and Labrador was a two-peaked BA.1 Omicron variant wave of prolonged duration that protected health care capacity.** The implementation of the Alert level 4 on January 4, 2022, and the subsequent easing of restrictions on February 17, 2022, meant that Newfoundland and Labrador has experienced a two-peaked BA.1 wave of longer duration. These restrictions helped to protect health care capacity by reducing the number of concurrent hospitalizations. With the restrictions, the total number of cases and deaths was only slightly reduced, suggesting that the predominant effect of the restrictions was to delay, rather than prevent, cases and severe illness.
-
-Below are some awkwardly coded comparisons of cases and deaths.
 
 
-```r
-fitted_total_deaths = filter(fitted_data,var=="death")%>%filter(date>"2021-12-15")%>%filter(!is.na(value))%>%summarize(sum(value))
+## {-}
 
-scenario_total_deaths = filter(scenario,date>"2021-12-15")%>%filter(!is.na(D))%>%summarize(sum(D))
+The Omicron wave in Newfoundland and Labrador has two peaks.
 
-fitted_total_cases = filter(fitted_data,var=="report")%>%filter(date>"2021-12-15")%>%filter(!is.na(value))%>%summarize(sum(value))
+The mid-February low in reported cases is matched by a dip in both hospitalizations and weekly deaths, and so all three data sources agree: cases reached a low in mid-February, separating peaks in January and March.
 
-scenario_total_cases = filter(scenario,date>"2021-12-15")%>%filter(!is.na(report))%>%summarize(sum(report))
+<img src="no_level_4_files/figure-html/unnamed-chunk-5-1.png" width="50%" /><img src="no_level_4_files/figure-html/unnamed-chunk-5-2.png" width="50%" /><img src="no_level_4_files/figure-html/unnamed-chunk-5-3.png" width="50%" />
+
+### Why does Newfoundland and Labrador have a two-peaked BA.1 wave?
+
+Even when fitting to the hospitalizations and deaths only, a good fit is only possible assuming that restrictions impacted the transmission rate.
+
+I have specified the dates, but the values are fitted to the hospitalization and death data:
+
+
+
+
+```
+##        dates transmission.rate
+## 1     before              0.59
+## 2 2022-01-04              0.22
+## 3 2022-02-17              0.59
 ```
 
-![](no_level_4_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+The transmission rate is the number of infections per day per infected person. The date of January 4, 2022, is selected to match the move to [Alert level 4](https://www.gov.nl.ca/releases/2022/health/0103n02/), and February 17, 2022, is selected to match the beginning of [phased re-opening](https://www.gov.nl.ca/releases/2022/health/0217n04/).
 
-**Figure 2. The BA.1 Omicron variant wave would have been similar to Ontario's had restrictions not been implemented in early January in Newfoundland and Labrador.** The simulated BA.1 Omicron wave for Newfoundland and Labrador without restrictions in early January has a similar shape to Ontario's BA.1 Omicron variant wave, with the wave beginning approximate 3 weeks later.
+In reality, both the escalation and relaxation of restrictions was layered, however, these two dates give a good fit and correspond to public health decisions.
+
+Due to epidemiological model that was fit the lows in hospital occupancy and weekly deaths lag behind the timing of the change in the transmission rate.
+
+<img src="no_level_4_files/figure-html/unnamed-chunk-8-1.png" width="50%" /><img src="no_level_4_files/figure-html/unnamed-chunk-8-2.png" width="50%" />
+
+
+### What if there were no public health restrictions in early January?
+
+Redoing the modelling, but without the decreased transmission rate on January 4, Newfoundland and Labrador would have experienced a BA.1 wave with few reported cases by mid-February, hospital occupancy dropping below 10 on March 31, and weekly deaths below 5 on March 3.
+
+The restrictions may have prolonged the BA.1 wave, but notably, without the restrictions, hospital occupancy might have peaked at around 80.
+
+<img src="no_level_4_files/figure-html/unnamed-chunk-9-1.png" width="50%" /><img src="no_level_4_files/figure-html/unnamed-chunk-9-2.png" width="50%" /><img src="no_level_4_files/figure-html/unnamed-chunk-9-3.png" width="50%" />
+
+Without the restrictions in early January, the shape of the BA.1 wave might have been similar to Ontario, although with a different maximum value, and delayed in arriving by about 3 weeks.
+
+<img src="no_level_4_files/figure-html/unnamed-chunk-10-1.png" width="50%" />
+
+Without the restrictions in early January, during the BA.1 wave there would have been 11% more deaths and 8.5% more cases. 
+
+
+
+
+
+```
+##       Quantity        Scenario Value
+## 1  total cases          actual 45535
+## 2  total cases no restrictions 50660
+## 3 total deaths          actual   188
+## 4 total deaths no restrictions   204
+```
+
+(note that `actual` is a model fitted estimate based on the fitting to the actual data)

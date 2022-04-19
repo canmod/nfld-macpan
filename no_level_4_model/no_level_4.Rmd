@@ -1,7 +1,7 @@
 ---
 title: "Newfoundland and Labrador's two-peaked BA.1 wave"
 author: "Amy Hurford and Steve Walker"
-date: "12/04/2022"
+date: "18/04/2022"
 output: 
   html_document: 
     keep_md: yes
@@ -17,10 +17,9 @@ library(patchwork)
 devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
 setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan")
 source('functions.R')
-observed_data = readRDS('observed_data.rds')
-observed_data2 = readRDS('observed_data2.rds')
-fit = readRDS('fit.rds')
-fitted_data = readRDS('fitted_data.rds')
+observed_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/observed_data2.rds')
+fit = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/fit.rds')
+fitted_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/fitted_data.rds')
 
 params = read_params("PHAC.csv")
 params["N"] = 522453  # nfld population
@@ -44,10 +43,34 @@ params_timevar = data.frame(
   Type = "abs"                          # abs = change to value in Value col
 )
 
-
 state <- make_state(params=params)
 res1 <- run_sim(params=params,params_timevar=params_timevar,state=state, start_date=start_date, end_date=end_date)
 scenario = data.frame(date=res1$date,H=res1$H, D = res1$death, report = res1$report, cumRep = res1$cumRep)
+
+# Filtered data
+deaths = filter(observed_data,var=="death")%>%group_by(week = cut(date, "week")) %>% summarise(value = sum(value))
+fitted_deaths = filter(fitted_data,var=="death")
+
+cases = filter(observed_data,var=="report")
+fitted_cases = filter(fitted_data,var=="report")
+p = var.frac(fitted_cases$date)$var.frac
+output = data.frame(date = fitted_cases$date, cases=fitted_cases$value, BA.2 = p*fitted_cases$value)
+
+hospital = filter(observed_data,var=="H")
+
+# Long fitted data.
+end_date = end_date + 200
+params_timevar = data.frame(
+  Date = tail(fit$forecast_args$time_args$params_timevar$Date), # dates of breakpoints
+  Symbol = "beta0",                     # parameters to vary
+  Value = tail(coef(fit, 'fitted')$time_params),                    # NA means calibrate to data
+  Type = "abs"                          # abs = change to value in Value col
+)
+
+state <- make_state(params=params)
+res2 <- run_sim(params=params,params_timevar=params_timevar,state=state, start_date=start_date, end_date=end_date)
+scenario.long = data.frame(date=res2$date,H=res2$H, D = res2$death, report = res2$report, cumRep = res2$cumRep)
+
 ```
 
 ```{r, include=FALSE}
@@ -59,56 +82,141 @@ datON = datON[datON$date>"2021-12-01",]
 
 ```{r,include=FALSE}
 gON = ggplot()+
-  geom_ribbon(data=datON,aes(x=as.Date(date), ymax=100*numtoday/max(numtoday), ymin=0), fill = "dodgerblue", alpha = 0.3)+
-  geom_line(data=scenario[!is.na(scenario$report),],aes(x=as.Date(date), y=100*report/max(report)), col = "black",lty=1)+
-  annotate("text", x = as.Date("2022-03-31"), y = 25, label = "Ontario", col="dodgerblue")+
-  annotate("text", x = as.Date("2022-02-10"), y = 75, label = "NL without\nrestrictions")+
+  geom_ribbon(data=datON,aes(x=as.Date(date), ymax=100*numtoday/max(numtoday), ymin=0), fill = "mediumaquamarine", alpha = 0.3)+
+  geom_line(data=datON,aes(x=as.Date(date), y=100*numtoday/max(numtoday)), col = "mediumaquamarine")+
+  geom_ribbon(data=scenario[!is.na(scenario$report),],aes(x=as.Date(date), ymax=100*report/max(report), ymin=0), fill = "tan1",alpha=0.3)+
+  geom_line(data=scenario[!is.na(scenario$report),],aes(x=as.Date(date), y=100*report/max(report)), col = "tan1",lty=1)+
+  annotate("text", x = as.Date("2022-03-31"), y = 25, label = "Ontario", col="mediumaquamarine")+
+  annotate("text", x = as.Date("2022-02-15"), y = 75, label = "NL without\nrestrictions in\nearly Jan", col = "tan1")+
   ylab("New cases as % of peak")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
   theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")
 
-gH = plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")+
-  geom_line(data=scenario,aes(x=as.Date(date), y=H), col = "black",lty=1)
+gH = plot_forecast(fitted_data, "H", observed_data)+ylab("Hospital occupancy")
 
 
-
-deaths = filter(observed_data,var=="death")%>%group_by(week = cut(date, "week")) %>% summarise(value = sum(value))
-fitted_deaths = filter(fitted_data,var=="death")
+gC = plot_forecast(fitted_data, "report", observed_data)+ylab("Reported new cases (daily)")
 
 gD = ggplot()+
   geom_ribbon(data=fitted_deaths, aes(x=as.Date(date),ymin=7*lwr, ymax=7*upr), alpha = 0.3, fill = "dodgerblue")+
   geom_point(data=deaths, aes(x=as.Date(week),y=value), fill = "white", pch=21)+
-  geom_line(data=fitted_deaths,aes(x=as.Date(date), y=7*value), col = "dodgerblue")+ylab("deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
-  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="grey", lty=2)+geom_line(data=scenario,aes(x=as.Date(date), y=7*D), col = "black", lty=1)
+  geom_line(data=fitted_deaths,aes(x=as.Date(date), y=7*value), col = "dodgerblue")+ylab("Deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")
 
-observed_cases = filter(observed_data2,var=="report")
-gcases = plot_forecast(fitted_data, "report", observed_data)+ylab("Reported cases")+geom_point(data=observed_cases, aes(x=as.Date(date),y=value), col = "dodgerblue", alpha=0.3)+geom_line(data=scenario,aes(x=as.Date(date), y=report), col = "black",lty=1)
-
-
+gcases = ggplot()+
+  #geom_point(data=cases,aes(x= as.Date(date),y=value), col = "black", pch=21, fill = "white")+
+geom_vline(aes(xintercept = tail(observed_data$date,1)),
+                colour = "grey60", linetype = "dashed")+
+geom_ribbon(data= output, aes(x= as.Date(date), ymax = cases,ymin=0),fill = "dodgerblue", alpha = 0.3)+
+  geom_line(data= output, aes(x= as.Date(date), y = cases),col = "dodgerblue", alpha = 0.3)+
+geom_ribbon(data= output, aes(x= as.Date(date), ymax = BA.2,ymin=0),fill = "blue", alpha = 0.3)+
+  annotate("text", x = as.Date("2022-03-08"), y = 200, label = "BA.1", col = "dodgerblue")+
+    annotate("text", x = as.Date("2022-03-28"), y = 100, label = "BA.2", col="darkblue")+
+  ylab("Est. reported new cases (daily)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")
 
 ```
 
-```{r, echo=F, warning=FALSE, fig.height=2.2}
-gcases
-gH
-gD
+```{r, include=F}
+gC.obs = ggplot()+
+  geom_line(data=cases, aes(x = date, y=value))+
+  geom_point(data=cases, aes(x = date, y=value),fill = "white", pch=21)+
+  labs(y = "Reported new cases (daily)")+
+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"),tail(as.Date(fitted_cases$date),1)))+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+
+  theme(axis.title.x = element_blank())
+
+gH.obs = ggplot()+
+  geom_line(data=hospital[!is.na(hospital$value),], aes(x = date, y=value))+
+  geom_point(data=hospital, aes(x = date, y=value),fill = "white", pch=21)+
+  labs(y = "Hospital occupancy")+
+  scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"),tail(as.Date(fitted_cases$date),1)))+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+
+  theme(axis.title.x = element_blank())
+
+gD.obs = ggplot()+
+  geom_line(data=deaths, aes(x = as.Date(week), y=value))+
+  geom_point(data=deaths, aes(x = as.Date(week),y=value),fill = "white", pch=21)+
+  ylab("Deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b",limits = c(as.Date("2021-12-15"),tail(as.Date(deaths$week),1)))+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+
+  theme(axis.title.x = element_blank())
 ```
 
-**Figure 1. The effect of restrictions in early-January in Newfoundland and Labrador was a two-peaked BA.1 Omicron variant wave of prolonged duration that protected health care capacity.** The implementation of the Alert level 4 on January 4, 2022, and the subsequent easing of restrictions on February 17, 2022, meant that Newfoundland and Labrador has experienced a two-peaked BA.1 wave of longer duration. These restrictions helped to protect health care capacity by reducing the number of concurrent hospitalizations. With the restrictions, the total number of cases and deaths was only slightly reduced, suggesting that the predominant effect of the restrictions was to delay, rather than prevent, cases and severe illness.
+## {-}
 
-Below are some awkwardly coded comparisons of cases and deaths.
+The Omicron wave in Newfoundland and Labrador has two peaks.
 
-```{r}
-fitted_total_deaths = filter(fitted_data,var=="death")%>%filter(date>"2021-12-15")%>%filter(!is.na(value))%>%summarize(sum(value))
+The mid-February low in reported cases is matched by a dip in both hospitalizations and weekly deaths, and so all three data sources agree: cases reached a low in mid-February, separating peaks in January and March.
 
-scenario_total_deaths = filter(scenario,date>"2021-12-15")%>%filter(!is.na(D))%>%summarize(sum(D))
-
-fitted_total_cases = filter(fitted_data,var=="report")%>%filter(date>"2021-12-15")%>%filter(!is.na(value))%>%summarize(sum(value))
-
-scenario_total_cases = filter(scenario,date>"2021-12-15")%>%filter(!is.na(report))%>%summarize(sum(report))
+```{r, echo=F, warning=FALSE, fig.height=2.5, out.width="50%"}
+gC.obs
+gH.obs
+gD.obs
 ```
 
-```{r,echo=F, warning=FALSE, fig.height=3}
+### Why does Newfoundland and Labrador have a two-peaked BA.1 wave?
+
+Even when fitting to the hospitalizations and deaths only, a good fit is only possible assuming that restrictions impacted the transmission rate.
+
+I have specified the dates, but the values are fitted to the hospitalization and death data:
+
+```{r, include=FALSE}
+transmission.rate = round(c(params$beta0, coef(fit, 'fitted')$time_params),2)
+dates = c("before",fit$forecast_args$time_args$params_timevar$Date)
+df = data.frame(dates,transmission.rate)
+```
+
+```{r,echo=F}
+df
+```
+
+The transmission rate is the number of infections per day per infected person. The date of January 4, 2022, is selected to match the move to [Alert level 4](https://www.gov.nl.ca/releases/2022/health/0103n02/), and February 17, 2022, is selected to match the beginning of [phased re-opening](https://www.gov.nl.ca/releases/2022/health/0217n04/).
+
+In reality, both the escalation and relaxation of restrictions was layered, however, these two dates give a good fit and correspond to public health decisions.
+
+Due to epidemiological model that was fit the lows in hospital occupancy and weekly deaths lag behind the timing of the change in the transmission rate.
+
+```{r, echo=F, warning=FALSE, fig.height=2.2, out.width="50%"}
+gH+geom_vline(aes(xintercept = as.Date(fit$forecast_args$time_args$params_timevar$Date[1])),colour = "grey60", linetype = "dashed")+geom_vline(aes(xintercept = as.Date(fit$forecast_args$time_args$params_timevar$Date[2])),colour = "grey60", linetype = "dashed")
+gD+geom_vline(aes(xintercept = as.Date(fit$forecast_args$time_args$params_timevar$Date[1])),colour = "grey60", linetype = "dashed")+geom_vline(aes(xintercept = as.Date(fit$forecast_args$time_args$params_timevar$Date[2])),colour = "grey60", linetype = "dashed")
+```
+
+
+### What if there were no public health restrictions in early January?
+
+Redoing the modelling, but without the decreased transmission rate on January 4, Newfoundland and Labrador would have experienced a BA.1 wave with few reported cases by mid-February, hospital occupancy dropping below 10 on March 31, and weekly deaths below 5 on March 3.
+
+The restrictions may have prolonged the BA.1 wave, but notably, without the restrictions, hospital occupancy might have peaked at around 80.
+
+```{r, echo=F, warning=FALSE, fig.height=2.5, out.width="50%"}
+gC+geom_line(data=scenario,aes(x=as.Date(date), y=report), col = "tan1",lty=1)+geom_ribbon(data=scenario,aes(x=as.Date(date), ymax=report, ymin=0), fill = "tan1",alpha = 0.3)
+gH+geom_line(data=scenario,aes(x=as.Date(date), y=H), col = "tan1",lty=1)+geom_ribbon(data=scenario,aes(x=as.Date(date), ymax=H, ymin=0), fill = "tan1",alpha = 0.3)
+gD+geom_line(data=scenario,aes(x=as.Date(date), y=7*D), col = "tan1", lty=1)+geom_ribbon(data=scenario,aes(x=as.Date(date), ymax=7*D, ymin=0), fill = "tan1",alpha = 0.3)
+```
+
+Without the restrictions in early January, the shape of the BA.1 wave might have been similar to Ontario, although with a different maximum value, and delayed in arriving by about 3 weeks.
+
+```{r, echo=F, warning=FALSE, fig.height=2.5, out.width="50%"}
 gON
 ```
 
-**Figure 2. The BA.1 Omicron variant wave would have been similar to Ontario's had restrictions not been implemented in early January in Newfoundland and Labrador.** The simulated BA.1 Omicron wave for Newfoundland and Labrador without restrictions in early January has a similar shape to Ontario's BA.1 Omicron variant wave, with the wave beginning approximate 3 weeks later.
+Without the restrictions in early January, during the BA.1 wave there would have been 11% more deaths and 8.5% more cases. 
+
+```{r, include=FALSE}
+fD = round(unname(filter(scenario.long,date>"2021-12-15")%>%filter(!is.na(D))%>%summarize(sum(D))))
+
+sD = round(unname(filter(scenario,date>"2021-12-15")%>%filter(!is.na(D))%>%summarize(sum(D))))
+
+fC = round(unname(filter(scenario.long,date>"2021-12-15")%>%filter(!is.na(report))%>%summarize(sum(report))))
+
+sC = round(unname(filter(scenario,date>"2021-12-15")%>%filter(!is.na(report))%>%summarize(sum(report))))
+
+df2 = data.frame(Quantity = c("total cases", "total cases", "total deaths", "total deaths"), Scenario = c("actual", "no restrictions", "actual", "no restrictions"), Value = c(45535, 50660, 188, 204))
+```
+
+
+```{r, echo=FALSE}
+df2
+```
+
+(note that `actual` is a model fitted estimate based on the fitting to the actual data)
