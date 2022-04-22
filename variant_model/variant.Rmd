@@ -64,7 +64,7 @@ gC=plot_forecast(fitted_data, "report", observed_data)+ylab("Est. reported new c
 
 
 ```{r, include=FALSE}
-gH=plot_forecast(fitted_data, "H", observed_data)+ylab("Fitted hospital occupancy")+scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))
+gH=plot_forecast(fitted_data, "H", observed_data)+ylab("Fitted hospital occupancy")+scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))+geom_vline(aes(xintercept = tail(observed_data$date,1)),colour = "grey60", linetype = "dashed")
 
 ```
 
@@ -78,7 +78,7 @@ g1 = ggplot()+
   geom_ribbon(data=fitted_deaths, aes(x=as.Date(date),ymin=7*lwr, ymax=7*upr), alpha = 0.3, fill = "dodgerblue")+
   geom_line(data=fitted_deaths,aes(x=as.Date(date), y=7*value), col = "dodgerblue")+ylab("Fitted deaths (weekly)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))+
   geom_point(data=deaths, aes(x=as.Date(week),y=value), fill = "white", pch=21)+
-  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(xintercept = max(observed_data$date), col="grey", lty=2)
+  theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")+geom_vline(aes(xintercept = tail(observed_data$date,1)), colour = "grey60", linetype = "dashed")
 
 g1
 ```

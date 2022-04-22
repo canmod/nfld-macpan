@@ -6,6 +6,7 @@ setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan"
 devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
 source('get_data.R')
 source('functions.R')
+source('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/fit_no_variant_model.R')
 fit = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/fit.rds')
 fitted_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/fitted_data.rds')
 
