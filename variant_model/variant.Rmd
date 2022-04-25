@@ -14,57 +14,69 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This fits a [compartmental epidemic model](https://mcmasterpandemic.shinyapps.io/mcmasterpandemicshiny/) to Newfoundland and Labrador COVID-19 data. This approach is used to model COVID-19 in [Ontario](https://mac-theobio.github.io/forecasts/outputs/McMasterOntarioForecastsBlog2022-01-26), however, there are differences in the model formulation for Newfoundland and Labrador.
 
-The model is mechanistic, or process-based. This contrasts with pattern-based models, which aim to capture the shape of the data and have parameters that do not readily have epidemiological interpretations. The parameters in the process-based model are:
+The model is mechanistic, or process-based. This contrasts with pattern-based models, which aim to capture the shape of the data and have parameters that do not readily have epidemiological interpretations.
+
+Some of the parameters in the process-based model that are fixed, i.e., general values that are constant across regions are:
 
 ```{r, warning=FALSE, message=FALSE, include=FALSE}
+options(scipen=999)
+devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
 library(McMasterPandemic)
+fit = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/fit.rds')
 params = read_params("PHAC.csv")
 params["N"] = 522453  # nfld population
+params$beta0 = as.numeric(unname(coef(fit, 'fitted')$params[1]))
+params$mu = as.numeric(unname(coef(fit, 'fitted')$params[2]))
+params$phi1 = as.numeric(unname(coef(fit, 'fitted')$params[3]))
+params$delta = as.numeric(unname(coef(fit, 'fitted')$params[4]))
+params$nonhosp_mort = as.numeric(unname(coef(fit, 'fitted')$params[5]))
 ```
 
 
+Population size `r params["N"]`
+
 Relative asymptomatic transmission (or contact) `r params["Ca"]`
-
-Relative presymptomatic transmission (or contact) `r params["Cp"]`
-
-relative mildly symptomatic transmission (or contact) `r params["Cm"]`
-
-relative severely symptomatic transmission (or contact) `r params["Cs"]`
 
 Fraction of cases asymptomatic `r params["alpha"]`
 
-Time in exposed class `r 1/params["sigma"]` days
+Time in exposed class `r 1/as.numeric(params["sigma"])` days
 
-Time for asymptomatic recovery `r 1/params["gamma_a"]` days
+Time in pre-symptomatic class `r 1/as.numeric(params["gamma_p"])` days
 
-Time for mildly symptomatic recovery `r 1/params["gamma_m"]` days
+Time for asymptomatic recovery `r 1/as.numeric(params["gamma_a"])` days
 
-Time for severely symptomatic transition to hospital/death `r 1/params["gamma_s"]` days
+Time for severely symptomatic transition to hospital/death `r 1/as.numeric(params["gamma_s"])` days
 
-Time in pre-symptomatic class `r 1/params["gamma_p"]` days
+Time in hospital (acute care) `r 1/as.numeric(params["rho"])` days
 
-Time in hospital (acute care) `r 1/params["rho"]` days
+Time in ICU to back to acute care `r 1/as.numeric(params["psi1"])`
 
-Population size `r params["N"]`
+Time in ICU to death `r 1/as.numeric(params["psi2"])`
 
-Fraction of ICU cases dying `r params["phi2"]`
+Fraction of ICU cases dying `r as.numeric(params["phi2"])`
 
-Time in ICU to back to acute care `r 1/params["psi1"]`
-
-Time in ICU to death `r 1/params["psi2"]`
-
-Time post-ICU to discharge `r 1/params["psi3"]`
+Time post-ICU to discharge `r 1/as.numeric(params["psi3"])`
 
 Fraction of incidence reported as positive tests `r params["c_prop"]`
 
-Average delay between incidence and test report `r params["c_delay_mean"]`
+<!-- Average delay between incidence and test report `r params["c_delay_mean"]` days -->
 
-Coefficient of variation of testing delay `r params["c_delay_cv"]`
 
+The parameters in the process-based model that are titted the Newfoundland and Labrador hospitalization and death data, are:
+
+Fraction of symptomatic cases that are mild: `r params$mu`
+
+Fraction of hospitalized cases to acute care: `r params$phi1`
+
+Fraction of acute care cases that are fatal: `r params$delta`
+
+Probability of mortality without hospitalization: `r params$nonhosp_mort`
+
+And the transmission rate, see [here](https://rpubs.com/ahurford/891932).
+
+\
 
 The software we used can be downloaded [here](https://github.com/mac-theobio/McMasterPandemic).
-
-For an explanation of the assumptions around changes in the transmission rate owing to public health measures, see [here](https://rpubs.com/ahurford/891932).
 
 Further details will be added soon.
 
@@ -102,6 +114,7 @@ geom_ribbon(data= output, aes(x= as.Date(date), ymax = BA.2,ymin=0),fill = "blue
   annotate("text", x = as.Date("2022-03-08"), y = 200, label = "BA.1", col = "dodgerblue")+
     annotate("text", x = as.Date("2022-03-28"), y = 100, label = "BA.2", col="darkblue")+
   ylab("Est. reported new cases (daily)")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))+
+   geom_point(data = cases,aes(x = date, y = value),fill = "white", pch=21)+
   theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")
 
 ```

@@ -173,28 +173,31 @@ pre code {
 
 
 <p>This fits a <a href="https://mcmasterpandemic.shinyapps.io/mcmasterpandemicshiny/">compartmental epidemic model</a> to Newfoundland and Labrador COVID-19 data. This approach is used to model COVID-19 in <a href="https://mac-theobio.github.io/forecasts/outputs/McMasterOntarioForecastsBlog2022-01-26">Ontario</a>, however, there are differences in the model formulation for Newfoundland and Labrador.</p>
-<p>The model is mechanistic, or process-based. This contrasts with pattern-based models, which aim to capture the shape of the data and have parameters that do not readily have epidemiological interpretations. The parameters in the process-based model are:</p>
+<p>The model is mechanistic, or process-based. This contrasts with pattern-based models, which aim to capture the shape of the data and have parameters that do not readily have epidemiological interpretations.</p>
+<p>Some of the parameters in the process-based model that are fixed, i.e., estimated from the Newfoundland and Labrador hospitalization and death data, are:</p>
+<p>Population size 522453</p>
 <p>Relative asymptomatic transmission (or contact) 0.6666667</p>
-<p>Relative presymptomatic transmission (or contact) 1</p>
-<p>relative mildly symptomatic transmission (or contact) 1</p>
-<p>relative severely symptomatic transmission (or contact) 1</p>
 <p>Fraction of cases asymptomatic 0.39</p>
 <p>Time in exposed class 3.3 days</p>
-<p>Time for asymptomatic recovery 7 days</p>
-<p>Time for mildly symptomatic recovery 7 days</p>
-<p>Time for severely symptomatic transition to hospital/death 5.72 days</p>
 <p>Time in pre-symptomatic class 1.2 days</p>
+<p>Time for asymptomatic recovery 7 days</p>
+<p>Time for severely symptomatic transition to hospital/death 5.72 days</p>
 <p>Time in hospital (acute care) 10 days</p>
-<p>Population size 5.22453^{5}</p>
-<p>Fraction of ICU cases dying 0.26</p>
 <p>Time in ICU to back to acute care 20</p>
 <p>Time in ICU to death 8</p>
+<p>Fraction of ICU cases dying 0.26</p>
 <p>Time post-ICU to discharge 5</p>
 <p>Fraction of incidence reported as positive tests 0.1</p>
-<p>Average delay between incidence and test report 11</p>
-<p>Coefficient of variation of testing delay 0.25</p>
+<!-- Average delay between incidence and test report 11 days -->
+<p>The parameters in the process-based model that are titted the Newfoundland and Labrador hospitalization and death data, are:</p>
+<p>Fraction of symptomatic cases that are mild: 0.997175</p>
+<p>Fraction of hospitalized cases to acute care: 0.0099815</p>
+<p>Fraction of acute care cases that are fatal: 0</p>
+<p>Probability of mortality without hospitalization: 0</p>
+<p>And the transmission rate, see <a href="https://rpubs.com/ahurford/891932">here</a>.</p>
+<p><br />
+</p>
 <p>The software we used can be downloaded <a href="https://github.com/mac-theobio/McMasterPandemic">here</a>.</p>
-<p>For an explanation of the assumptions around changes in the transmission rate owing to public health measures, see <a href="https://rpubs.com/ahurford/891932">here</a>.</p>
 <p>Further details will be added soon.</p>
 
 

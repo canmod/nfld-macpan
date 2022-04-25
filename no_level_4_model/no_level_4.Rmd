@@ -26,10 +26,11 @@ params = read_params("PHAC.csv")
 params["N"] = 522453  # nfld population
 params = fix_pars(params)
 
-# This gives me errors but then I run the line individually and it's fine
 params$beta0 = as.numeric(unname(coef(fit, 'fitted')$params[1]))
 params$mu = as.numeric(unname(coef(fit, 'fitted')$params[2]))
 params$phi1 = as.numeric(unname(coef(fit, 'fitted')$params[3]))
+params$delta = as.numeric(unname(coef(fit, 'fitted')$params[4]))
+params$nonhosp_mort = as.numeric(unname(coef(fit, 'fitted')$params[5]))
 
 end_date = max(observed_data$date)
 #Changing from 90 to 15 improves fit substantially
@@ -190,7 +191,7 @@ gH+geom_line(data=scenario,aes(x=as.Date(date), y=H), col = "tan1",lty=1)+geom_r
 gD+geom_line(data=scenario,aes(x=as.Date(date), y=7*D), col = "tan1", lty=1)+geom_ribbon(data=scenario,aes(x=as.Date(date), ymax=7*D, ymin=0), fill = "tan1",alpha = 0.3)
 ```
 
-Without the restrictions in early January, the shape of the BA.1 wave might have been similar to Ontario, although with a different maximum value, delayed in arriving by about 4 weeks, and there may have been 36% more deaths and 39% more cases. 
+Without the restrictions in early January, the shape of the BA.1 wave might have been similar to Ontario, although with a different maximum value, delayed in arriving by about 4 weeks, and there may have been 8.5% more deaths and 11% more cases. 
 
 ```{r, echo=F, warning=FALSE, fig.height=2.5, out.width="50%"}
 gON
@@ -206,7 +207,7 @@ fC = round(unname(filter(scenario.long,date>"2021-12-15")%>%filter(!is.na(report
 
 sC = round(unname(filter(scenario,date>"2021-12-15")%>%filter(!is.na(report))%>%summarize(sum(report))))
 
-df2 = data.frame(Quantity = c("total cases", "total cases", "total deaths", "total deaths"), Scenario = c("actual", "no restrictions", "actual", "no restrictions"), Value = c(35115, 48958, 94, 128))
+df2 = data.frame(Quantity = c("total cases", "total cases", "total deaths", "total deaths"), Scenario = c("actual", "no restrictions", "actual", "no restrictions"), Value = c(45639, 50706, 200, 217))
 ```
 
 

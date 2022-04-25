@@ -6,7 +6,6 @@ setwd("/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan"
 devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
 source('get_data.R')
 source('functions.R')
-source('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/fit_no_variant_model.R')
 fit = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/fit.rds')
 fitted_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/fitted_data.rds')
 
@@ -65,6 +64,8 @@ opt_pars = list(
   params = c(
     log_beta0 = log(params[["beta0"]]),    # transmission rate on log scale
     logit_mu = qlogis(params[['mu']]),     # fraction of cases that are mild on logit scale
+    logit_phi1 = qlogis(params[['phi1']]),
+    logit_delta = qlogis(1e-3),
     logit_nonhosp_mort = qlogis(1e-3)  # hospitalization rate (kind of) on logit scale
   ),
   log_time_params = rep(log(params[["beta0"]]), nrow(params_timevar))
