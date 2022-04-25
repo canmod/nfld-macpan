@@ -19,10 +19,10 @@ library(ggplot2)
 library(patchwork)
 devtools::source_gist("98cc4db25867bd18cc42b6568b4c6848", sha1 = "3cc333562e")
 source('../functions.R')
-observed_data = readRDS('../observed_data.rds')
-observed_data2 = readRDS('../observed_data2.rds')
-fit = readRDS('../fit.rds')
-fitted_data = readRDS('../fitted_data.rds')
+observed_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files//observed_data.rds')
+observed_data2 = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files//observed_data2.rds')
+fit = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files//fit.rds')
+fitted_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files//fitted_data.rds')
 ```
 
 # Calibration

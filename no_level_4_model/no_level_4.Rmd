@@ -88,7 +88,7 @@ gON = ggplot()+
   geom_ribbon(data=scenario[!is.na(scenario$report),],aes(x=as.Date(date), ymax=100*report/max(report), ymin=0), fill = "tan1",alpha=0.3)+
   geom_line(data=scenario[!is.na(scenario$report),],aes(x=as.Date(date), y=100*report/max(report)), col = "tan1",lty=1)+
   annotate("text", x = as.Date("2022-03-31"), y = 25, label = "Ontario", col="mediumaquamarine")+
-  annotate("text", x = as.Date("2022-02-15"), y = 75, label = "NL without\nrestrictions in\nearly Jan", col = "tan1")+
+  annotate("text", x = as.Date("2022-03-01"), y = 75, label = "NL without\nrestrictions in\nearly Jan", col = "tan1")+
   ylab("New cases as % of peak")+ scale_x_date(date_breaks = "7 day", date_labels = "%d %b")+
   theme(axis.text.x = element_text(angle = 90),legend.position = "none")+xlab("")
 
@@ -190,7 +190,7 @@ gH+geom_line(data=scenario,aes(x=as.Date(date), y=H), col = "tan1",lty=1)+geom_r
 gD+geom_line(data=scenario,aes(x=as.Date(date), y=7*D), col = "tan1", lty=1)+geom_ribbon(data=scenario,aes(x=as.Date(date), ymax=7*D, ymin=0), fill = "tan1",alpha = 0.3)
 ```
 
-Without the restrictions in early January, the shape of the BA.1 wave might have been similar to Ontario, although with a different maximum value, delayed in arriving by about 3 weeks, and there may have been 11% more deaths and 8.5% more cases. 
+Without the restrictions in early January, the shape of the BA.1 wave might have been similar to Ontario, although with a different maximum value, delayed in arriving by about 4 weeks, and there may have been 36% more deaths and 39% more cases. 
 
 ```{r, echo=F, warning=FALSE, fig.height=2.5, out.width="50%"}
 gON
@@ -206,7 +206,7 @@ fC = round(unname(filter(scenario.long,date>"2021-12-15")%>%filter(!is.na(report
 
 sC = round(unname(filter(scenario,date>"2021-12-15")%>%filter(!is.na(report))%>%summarize(sum(report))))
 
-df2 = data.frame(Quantity = c("total cases", "total cases", "total deaths", "total deaths"), Scenario = c("actual", "no restrictions", "actual", "no restrictions"), Value = c(45535, 50660, 188, 204))
+df2 = data.frame(Quantity = c("total cases", "total cases", "total deaths", "total deaths"), Scenario = c("actual", "no restrictions", "actual", "no restrictions"), Value = c(35115, 48958, 94, 128))
 ```
 
 

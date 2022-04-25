@@ -33,9 +33,9 @@ For the modelling, I specify the dates when the transmission rate changed, but t
 
 ```
 ##        dates transmission.rate
-## 1     before              0.59
-## 2 2022-01-04              0.22
-## 3 2022-02-17              0.56
+## 1     before              0.54
+## 2 2022-01-04              0.23
+## 3 2022-02-17              0.37
 ```
 
 The date of January 4, 2022, is selected to correspond to the move to [Alert level 4](https://www.gov.nl.ca/releases/2022/health/0103n02/), and February 17, 2022, is selected to match the beginning of [phased re-opening](https://www.gov.nl.ca/releases/2022/health/0217n04/). In reality, both the escalation and relaxation of restrictions was layered, however, these two dates give a good agreement of the model to the data, and correspond to the dates of public health decisions.
@@ -52,7 +52,7 @@ If we keep all aspects of the model, except we assume no restrictions were imple
 
 <img src="no_level_4_files/figure-html/unnamed-chunk-9-1.png" width="50%" /><img src="no_level_4_files/figure-html/unnamed-chunk-9-2.png" width="50%" /><img src="no_level_4_files/figure-html/unnamed-chunk-9-3.png" width="50%" />
 
-Without the restrictions in early January, the shape of the BA.1 wave might have been similar to Ontario, although with a different maximum value, delayed in arriving by about 3 weeks, and there may have been 11% more deaths and 8.5% more cases. 
+Without the restrictions in early January, the shape of the BA.1 wave might have been similar to Ontario, although with a different maximum value, delayed in arriving by about 4 weeks, and there may have been 36% more deaths and 39% more cases. 
 
 <img src="no_level_4_files/figure-html/unnamed-chunk-10-1.png" width="50%" />
 
@@ -63,10 +63,10 @@ Without the restrictions in early January, the shape of the BA.1 wave might have
 
 ```
 ##       Quantity        Scenario Value
-## 1  total cases          actual 45535
-## 2  total cases no restrictions 50660
-## 3 total deaths          actual   188
-## 4 total deaths no restrictions   204
+## 1  total cases          actual 35115
+## 2  total cases no restrictions 48958
+## 3 total deaths          actual    94
+## 4 total deaths no restrictions   128
 ```
 
 (note that `actual` is a model fitted estimate based on the fitting to the actual data)

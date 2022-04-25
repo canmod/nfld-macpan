@@ -65,7 +65,7 @@ opt_pars = list(
   params = c(
     log_beta0 = log(params[["beta0"]]),    # transmission rate on log scale
     logit_mu = qlogis(params[['mu']]),     # fraction of cases that are mild on logit scale
-    logit_phi1 = qlogis(params[['phi1']])  # hospitalization rate (kind of) on logit scale
+    logit_nonhosp_mort = qlogis(1e-3)  # hospitalization rate (kind of) on logit scale
   ),
   log_time_params = rep(log(params[["beta0"]]), nrow(params_timevar))
 )

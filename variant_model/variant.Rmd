@@ -12,7 +12,57 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This fits a [compartmental epidemic model](https://mcmasterpandemic.shinyapps.io/mcmasterpandemicshiny/) to Newfoundland and Labrador COVID-19 data. This approach is used to model COVID-19 in [Ontario](https://mac-theobio.github.io/forecasts/outputs/McMasterOntarioForecastsBlog2022-01-26), however, there are differences in the model formulation for Newfoundland and Labrador. The software we used can be downloaded [here](https://github.com/mac-theobio/McMasterPandemic).
+This fits a [compartmental epidemic model](https://mcmasterpandemic.shinyapps.io/mcmasterpandemicshiny/) to Newfoundland and Labrador COVID-19 data. This approach is used to model COVID-19 in [Ontario](https://mac-theobio.github.io/forecasts/outputs/McMasterOntarioForecastsBlog2022-01-26), however, there are differences in the model formulation for Newfoundland and Labrador.
+
+The model is mechanistic, or process-based. This contrasts with pattern-based models, which aim to capture the shape of the data and have parameters that do not readily have epidemiological interpretations. The parameters in the process-based model are:
+
+```{r, warning=FALSE, message=FALSE, include=FALSE}
+library(McMasterPandemic)
+params = read_params("PHAC.csv")
+params["N"] = 522453  # nfld population
+```
+
+
+Relative asymptomatic transmission (or contact) `r params["Ca"]`
+
+Relative presymptomatic transmission (or contact) `r params["Cp"]`
+
+relative mildly symptomatic transmission (or contact) `r params["Cm"]`
+
+relative severely symptomatic transmission (or contact) `r params["Cs"]`
+
+Fraction of cases asymptomatic `r params["alpha"]`
+
+Time in exposed class `r 1/params["sigma"]` days
+
+Time for asymptomatic recovery `r 1/params["gamma_a"]` days
+
+Time for mildly symptomatic recovery `r 1/params["gamma_m"]` days
+
+Time for severely symptomatic transition to hospital/death `r 1/params["gamma_s"]` days
+
+Time in pre-symptomatic class `r 1/params["gamma_p"]` days
+
+Time in hospital (acute care) `r 1/params["rho"]` days
+
+Population size `r params["N"]`
+
+Fraction of ICU cases dying `r params["phi2"]`
+
+Time in ICU to back to acute care `r 1/params["psi1"]`
+
+Time in ICU to death `r 1/params["psi2"]`
+
+Time post-ICU to discharge `r 1/params["psi3"]`
+
+Fraction of incidence reported as positive tests `r params["c_prop"]`
+
+Average delay between incidence and test report `r params["c_delay_mean"]`
+
+Coefficient of variation of testing delay `r params["c_delay_cv"]`
+
+
+The software we used can be downloaded [here](https://github.com/mac-theobio/McMasterPandemic).
 
 For an explanation of the assumptions around changes in the transmission rate owing to public health measures, see [here](https://rpubs.com/ahurford/891932).
 
@@ -59,7 +109,6 @@ geom_ribbon(data= output, aes(x= as.Date(date), ymax = BA.2,ymin=0),fill = "blue
 ```{r, include=FALSE}
 observed_cases = filter(observed_data,var=="report")
 gC=plot_forecast(fitted_data, "report", observed_data)+ylab("Est. reported new cases (daily)")+scale_x_date(date_breaks = "7 day", date_labels = "%d %b", limits = c(as.Date("2021-12-15"), tail(as.Date(fitted_cases$date),1)))
-#+geom_point(data=observed_cases, aes(x=as.Date(date),y=value), col = "dodgerblue", alpha=0.3)
 ```
 
 
