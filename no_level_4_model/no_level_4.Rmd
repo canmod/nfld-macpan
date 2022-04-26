@@ -29,8 +29,8 @@ params = fix_pars(params)
 params$beta0 = as.numeric(unname(coef(fit, 'fitted')$params[1]))
 params$mu = as.numeric(unname(coef(fit, 'fitted')$params[2]))
 params$phi1 = as.numeric(unname(coef(fit, 'fitted')$params[3]))
-params$delta = as.numeric(unname(coef(fit, 'fitted')$params[4]))
-params$nonhosp_mort = as.numeric(unname(coef(fit, 'fitted')$params[5]))
+params$nonhosp_mort = as.numeric(unname(coef(fit, 'fitted')$params[4]))
+params$delta = as.numeric(unname(coef(fit, 'fitted')$params[5]))
 
 end_date = max(observed_data$date)
 #Changing from 90 to 15 improves fit substantially

@@ -20,18 +20,19 @@ fit$forecast_args$opt_pars$params
 ```
 
 ```
-##          log_beta0           logit_mu logit_nonhosp_mort 
-##         -0.2873509          3.0785683         -6.9067548
+##   log_beta0    logit_mu  logit_phi1 logit_delta 
+##  -0.2873509   3.0785683   1.1526795  -6.9067548
 ```
 Prefixing by `log_` or `logit_` means we are optimizing on these scales.
 
 These parameters have the following meanings (TODO: the description for phi1 looks wrong). [AH: would be helpful to print out more parameters here, recovery rate, duration of pre-symptomatic, etc]
 
 ```
-##         symbol value                                                    meaning
-## 1        beta0  0.75 Baseline (non-intervention) transmission across categories
-## 2           mu 0.956                Fraction of symptomatic cases that are mild
-## 3 nonhosp_mort     0           probability of mortality without hospitalization
+##   symbol value                                                    meaning
+## 1  beta0  0.75 Baseline (non-intervention) transmission across categories
+## 2  delta     0                Fraction of acute-care cases that are fatal
+## 3     mu 0.956                Fraction of symptomatic cases that are mild
+## 4   phi1  0.76                          Fraction of hospital cases to ICU
 ```
 
 Use the following time-variation schedule for these parameters. These correspond to the implementation of Alert level 4, and the beginning of phased re-opening, and without these breakpoints the model cannot fit the data. These suggests these NPIs were important in shaping the dynamics of the early Omicron wave in NL.
@@ -58,15 +59,15 @@ coef(fit, 'fitted')
 
 ```
 ## $params
-##        beta0           mu nonhosp_mort 
-##    0.5411151    0.9974856    0.3223905 
+##        beta0           mu         phi1        delta 
+## 5.980234e-01 9.957823e-01 2.154201e-02 1.175167e-05 
 ## 
 ## $time_params
-## [1] 0.2255002 0.3653690
+## [1] 0.2186129 0.6337746
 ## 
 ## $nb_disp
-##        death            H        cases 
-## 6.656625e-01 5.774836e+04 9.260357e-11
+##       death           H       cases 
+##    0.280621 2178.206269    2.363543
 ```
 The `time_params` in this particular case refer to changing transmission rate. The first change in transmission rate is lower than the baseline, consistent with restrictions being implemented on the associated date. The second change is higher, which seems to be consistent with lifting restrictions on that date.
 
