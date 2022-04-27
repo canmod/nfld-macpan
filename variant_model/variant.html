@@ -182,11 +182,11 @@ pre code {
 <p><br />
 </p>
 <p>Our modelling approach is to fit a <a href="https://mcmasterpandemic.shinyapps.io/mcmasterpandemicshiny/">compartmental epidemic model</a> to Newfoundland and Labrador COVID-19 data. This approach is used to model COVID-19 in <a href="https://mac-theobio.github.io/forecasts/outputs/McMasterOntarioForecastsBlog2022-01-26">Ontario</a>, however, there are differences in the model formulation for Newfoundland and Labrador.</p>
-<p>This modelling approach is mechanistic, or process-based. Process-based modelling contrasts with pattern-based, or phenomenological modelling, which aims to capture the shape of the data and has parameters that do not readily have epidemiological interpretations.</p>
-<p>To understand what is mean by a <em>process-based</em> model, consider some of the model parameters that are fixed, and independent of the Newfoundland and Labrador COVID-19 data. Such parameters may describe epidemiological characteristics that aren’t different in different regions, i.e. the recovery rate, or are estimated using other data, i.e., the population size of Newfoundland and Labrador.</p>
+<p>This modelling approach is mechanistic, or process-based. Process-based modelling contrasts with pattern-based, or phenomenological modelling, which aims to capture the shape of the data and has parameters that do not necessarily have epidemiological interpretations.</p>
+<p>To understand what is meant by a <em>process-based</em> model, consider some of the model parameters that are fixed, and independent of the Newfoundland and Labrador COVID-19 data. Such parameters may describe epidemiological characteristics that are not region-specific, for example, the recovery rate from infection; or are estimated using other data, for example, the population size of Newfoundland and Labrador, which is estimated from Statistics Canada data, not the COIVD-19 hospitalization and death data.</p>
 <p><br />
 </p>
-<p><strong><u>Selected fixed parameter values</u></strong></p>
+<p><strong><u>Selected fixed parameter values</u></strong> (estimated <em>independently</em> of the Newfoundland and Labrador COVID-19 data)</p>
 <ul>
 <li><p>Population size: <strong>522453</strong></p></li>
 <li><p>Relative asymptomatic transmission (or contact): <strong>0.67</strong></p></li>
@@ -200,19 +200,22 @@ pre code {
 <li><p>% of ICU cases dying: <strong>26%</strong></p></li>
 </ul>
 <p>Aside from the population size of Newfoundland and Labrador, the fixed parameter values are the <code>PHAC.csv</code> defaults for the <code>McMasterPandemic</code> software package.</p>
-<p>Fitted parameters are values that are calibrated to match the Newfoundland and Labrador COVID-19 data.</p>
 <p><br />
 </p>
-<p><strong><u>Fitted parameter values</u></strong></p>
+<p><strong><u>Fitted parameter values</u></strong> (<em>calibrated</em> to match the Newfoundland and Labrador COVID-19 data)</p>
 <ul>
-<li><p>% of symptomatic cases that are mild: <strong>99.7%</strong></p></li>
-<li><p>% of hospitalized cases to acute care: <strong>4.6%</strong></p></li>
-<li><p>% population dying without hospitalization: <strong>2.1</strong></p></li>
-<li><p>The infection transmission rate is fitted and full details are provided <a href="https://rpubs.com/ahurford/891932">here</a>.</p></li>
+<li>% of symptomatic cases that are mild: <strong>99.7%</strong></li>
+</ul>
+<!-- - % of hospitalized cases to acute care: **4.1%** -->
+<!-- - % population dying without hospitalization: **0** -->
+<ul>
+<li>The infection transmission rate is fitted and full details are provided <a href="https://rpubs.com/ahurford/891932">here</a>.</li>
 </ul>
 <p><br />
 </p>
-<p>The software we used can be downloaded <a href="https://github.com/mac-theobio/McMasterPandemic">here</a>.</p>
+<p>These are just some of the fixed and fitted parameters. When new data is provided, for example, the recent report of COVID-19 in <a href="https://www.cbc.ca/news/canada/newfoundland-labrador/covid-nl-april-22-2022-1.6427397">hospital, long-term care, and private dwellings</a>, I can provide more fixed parameters, which facilitates more accurate estimation of the fitted parameters.</p>
+<p>How the parameters affect the relevant quantities, i.e. ICU occupancy, is shown in the flow diagram, and the model dynamics with only fixed parameters can be explored <a href="https://mcmasterpandemic.shinyapps.io/mcmasterpandemicshiny/">here</a>.</p>
+<p>The software we used is <a href="https://github.com/mac-theobio/McMasterPandemic">freely available</a> and runs on <a href="https://www.r-project.org/">R</a>, a free programming language.</p>
 
 
 
