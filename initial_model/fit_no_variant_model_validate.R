@@ -23,11 +23,13 @@ observed_data = (NLdatahub
   %>% pivot_longer(-date, names_to = "var")
 )
 
+observed_data = observed_data %>% filter(date < "2022-04-14")
+
 params = read_params("PHAC.csv")
 params["N"] = 522453  # nfld population
 params = fix_pars(params)
 
-end_date = max(observed_data$date)+14
+end_date = max(observed_data$date)+30
 #Changing from 90 to 15 improves fit substantially
 start_date_offset = 15
 start_date = min(observed_data$date) - start_date_offset
@@ -74,18 +76,6 @@ fit = calibrate(
 
 fitted_data = forecast_ensemble(fit, nsim = 200)
 
-# This is so that that case data can be used for plotting, just not fitting
-observed_data2 = (NLdatahub
-                 # convert names to those used by the macpan model
-                 %>% rename(
-                   death = new.death,
-                   H = in.hospital,
-                   report = cases
-                 )
-                 %>% pivot_longer(-date, names_to = "var")
-)
-
-saveRDS(observed_data, "initial_model/initial_model_files/observed_data.rds")
-saveRDS(observed_data2, "initial_model/initial_model_files/observed_data2.rds")
-saveRDS(fit, "initial_model/initial_model_files/fit.rds")
-saveRDS(fitted_data, "initial_model/initial_model_files/fitted_data.rds")
+saveRDS(observed_data, "initial_model/initial_model_files/observed_data_validate.rds")
+saveRDS(fit, "initial_model/initial_model_files/fit_validate.rds")
+saveRDS(fitted_data, "initial_model/initial_model_files/fitted_data_validate.rds")

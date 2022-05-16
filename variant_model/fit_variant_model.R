@@ -9,6 +9,9 @@ source('functions.R')
 fit = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/fit.rds')
 fitted_data = readRDS('/Users/ahurford/Desktop/Work/Research/Research_Projects/2022/nfld-macpan/initial_model/initial_model_files/fitted_data.rds')
 
+## This code may not work unless removing the 14 days that are forecast
+## from the fitted data
+
 fitted_cases = filter(fitted_data,var=="report")
 # The fraction of BA.2 cases
 BA.2 = var.frac(fitted_cases$date)
